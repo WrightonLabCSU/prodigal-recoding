@@ -8,9 +8,9 @@ prodigal -i my.metagenome.fna -o my.genes -a my.proteins.faa -p meta
 prodigal -h
 ```
 
-### New in 2.6.3 (February 2016)
-  * Fixed a bug in protein translation output of partial genes where TTG/GTG
-codons were being incorrectly translated to methionine.
+### New in 2.6.7 (February 2023)
+  * Allow specification of amber, ochre, and/or opal read-through modes for
+standard bacterial/archaeal genetic code (translation table 11)
 
 ### Getting Started
 

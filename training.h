@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 struct _training {
   double gc;                    /* GC Content */
   int trans_table;              /* 11 = Standard Microbial, NCBI Trans Table to
@@ -48,6 +47,15 @@ struct _training {
                                    motifs) */
   double no_mot;                /* Weight for the case of no motif */
   double gene_dc[4096];         /* Coding statistics for the genome */
+  int amber_readthrough;        /* Whether TAG (amber) can be read through by
+                                  bacterial and archaeal translation tables
+                                  (1 means yes, 0 means no) */
+  int ochre_readthrough;        /* Whether TAA (ochre) can be read through by
+                                  bacterial and archaeal translation tables
+                                  (1 means yes, 0 means no) */                                 
+  int opal_readthrough;         /* Whether TGA (opal) can be read through by
+                                  bacterial and archaeal translation tables
+                                  (1 means yes, 0 means no) */                                   
 };
 
 int write_training_file(char *, struct _training *);

@@ -28,8 +28,8 @@
 #include "fptr.h"
 
 
-#define VERSION "2.6.3"
-#define DATE "February, 2016"
+#define VERSION "2.6.4"
+#define DATE "February, 2023"
 
 #define MIN_SINGLE_GENOME 20000
 #define IDEAL_SINGLE_GENOME 100000
@@ -42,7 +42,7 @@ int copy_standard_input_to_file(char *, int);
 
 int main(int argc, char *argv[]) {
 
-  int rv, slen, nn, ng, i, ipath, *gc_frame, do_training, output, max_phase;
+  int rv, slen, nn, ng, i, j, ipath, *gc_frame, do_training, output, max_phase;
   int closed, do_mask, nmask, force_nonsd, user_tt, is_meta, num_seq, quiet;
   int piped, max_slen, fnum;
   double max_score, gc, low, high;
@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
   struct _training tinf;
   struct _metagenomic_bin meta[NUM_META];
   mask mlist[MAX_MASKS];
+  int user_readthrough_mode_specified;    
 
   /* Allocate memory and initialize variables */
   seq = (unsigned char *)malloc(MAX_SEQ/4*sizeof(unsigned char));
@@ -113,15 +114,17 @@ int main(int argc, char *argv[]) {
 
   /* Parse the command line arguments */
   for(i = 1; i < argc; i++) {
-    if(i == argc-1 && (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "-T") == 0
-       || strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-A") == 0 ||
+    if(i == argc-1 && (
+       strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "-T") == 0 ||
+       strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-A") == 0 ||
        strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "-g") == 0 ||
        strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "-F") == 0 ||
        strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "-S") == 0 ||
        strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "-I") == 0 ||
        strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "-O") == 0 ||
-       strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-P") == 0))
-      usage("-a/-f/-g/-i/-o/-p/-s options require parameters.");
+       strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-P") == 0 ||
+       strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "-R") == 0))
+      usage("-a/-f/-g/-i/-o/-p/-r/-s options require parameters.");
     else if(strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-C") == 0)
       closed = 1;
     else if(strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "-Q") == 0)
@@ -164,6 +167,38 @@ int main(int argc, char *argv[]) {
         usage("Invalid translation table specified.");
       user_tt = tinf.trans_table;
       i++;
+    }
+    else if(strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "-R") == 0) {
+      /* Start parsing the subsequent arguments to determine which read-through
+      mode(s) is/are specified. Stop when we have run out of arguments or found
+      one that can't be interpreted as a read-through mode. Whenever we find a
+      read-through mode, we know that we will need to resume the wider search
+      for arguments after it. */
+      for(j = i + 1; j < argc; j++) {
+        if(strcmp(argv[j], "amber") == 0 || strcmp(argv[j], "AMBER") == 0) {
+          tinf.amber_readthrough = 1;
+          user_readthrough_mode_specified = 1;
+          i = j + 1;
+        }
+        else if (strcmp(argv[j], "opal") == 0 || strcmp(argv[j], "OPAL") == 0) {
+          tinf.opal_readthrough = 1;
+          user_readthrough_mode_specified = 1;            
+          i = j + 1;
+        }
+        else if (strcmp(argv[j], "ochre") == 0 || strcmp(argv[j], "OCHRE") == 0) {
+          tinf.ochre_readthrough = 1;
+          user_readthrough_mode_specified = 1;            
+          i = j + 1;
+        }
+        else {
+          /* Since this is NOT a read-through mode, we will resume the wider
+          search at this position. */
+          i = j; 
+          break;
+        }
+      }
+      if(user_readthrough_mode_specified == 0)
+        usage("No read-through mode specified following -r/-R flag.");
     }
     else if(strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-P") == 0) {
       if(argv[i+1][0] == '0' || argv[i+1][0] == 's' || argv[i+1][0] ==
@@ -644,7 +679,8 @@ void usage(char *msg) {
   fprintf(stderr, " [-f output_type]\n");
   fprintf(stderr, "                 [-g tr_table] [-h] [-i input_file] [-m]");
   fprintf(stderr, " [-n] [-o output_file]\n");
-  fprintf(stderr, "                 [-p mode] [-q] [-s start_file]");
+  fprintf(stderr, "                 [-p mode] [-r read-through_modes]\n");
+  fprintf(stderr, "                 [-q] [-s start_file]");  
   fprintf(stderr, " [-t training_file] [-v]\n");
   fprintf(stderr, "\nDo 'prodigal -h' for more information.\n\n");
   exit(15);
@@ -655,7 +691,8 @@ void help() {
   fprintf(stderr, " [-f output_type]\n");
   fprintf(stderr, "                 [-g tr_table] [-h] [-i input_file] [-m]");
   fprintf(stderr, " [-n] [-o output_file]\n");
-  fprintf(stderr, "                 [-p mode] [-q] [-s start_file]");
+  fprintf(stderr, "                 [-p mode] [-r read-through_modes]\n");
+  fprintf(stderr, "                 [-q] [-s start_file]");  
   fprintf(stderr, " [-t training_file] [-v]\n");
   fprintf(stderr, "\n         -a:  Write protein translations to the selected ");
   fprintf(stderr, "file.\n");
@@ -679,6 +716,8 @@ void help() {
   fprintf(stderr, "         -p:  Select procedure (single or meta).  Default");
   fprintf(stderr, " is single.\n");
   fprintf(stderr, "         -q:  Run quietly (suppress normal stderr output).\n");
+  fprintf(stderr, "         -r:  Allow read-through of the subsequent list of codons");
+  fprintf(stderr, " (amber, opal, ochre) Only applied to translation table 11.\n");
   fprintf(stderr, "         -s:  Write all potential genes (with scores) to");
   fprintf(stderr, " the selected file.\n");
   fprintf(stderr, "         -t:  Write a training file (if none exists); ");
