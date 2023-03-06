@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
   input_file = NULL; output_file = NULL; piped = 0;
   output_ptr = stdout; max_slen = 0;
   output = 0; closed = 0; do_mask = 0; force_nonsd = 0;
+  user_readthrough_mode_specified = 0;
 
   /* Filename for input copy if needed */
   pid = getpid();
@@ -225,6 +226,13 @@ int main(int argc, char *argv[]) {
       i++;
     }
     else usage("Unknown option.");
+  }
+
+  /* Because the anonymous mode doesn't contain any information regarding
+  color codons, it is incompatible with any read-through mode(s). */
+  if (is_meta == 1 && user_readthrough_mode_specified == 1)
+  {
+    usage("Anonymous mode is incompatible with read-through modes.");
   }
 
   /* Print header */
@@ -679,7 +687,7 @@ void usage(char *msg) {
   fprintf(stderr, " [-f output_type]\n");
   fprintf(stderr, "                 [-g tr_table] [-h] [-i input_file] [-m]");
   fprintf(stderr, " [-n] [-o output_file]\n");
-  fprintf(stderr, "                 [-p mode] [-r read-through_modes]\n");
+  fprintf(stderr, "                 [-p mode] [-r read-through_mode(s)]\n");
   fprintf(stderr, "                 [-q] [-s start_file]");  
   fprintf(stderr, " [-t training_file] [-v]\n");
   fprintf(stderr, "\nDo 'prodigal -h' for more information.\n\n");
@@ -717,7 +725,8 @@ void help() {
   fprintf(stderr, " is single.\n");
   fprintf(stderr, "         -q:  Run quietly (suppress normal stderr output).\n");
   fprintf(stderr, "         -r:  Allow read-through of the subsequent list of codons");
-  fprintf(stderr, " (amber, opal, ochre) Only applied to translation table 11.\n");
+  fprintf(stderr, " (amber, opal, ochre) Only applied to translation table 11 ");
+  fprintf(stderr, " and only valid for anonymous/metagenomic mode.\n");  
   fprintf(stderr, "         -s:  Write all potential genes (with scores) to");
   fprintf(stderr, " the selected file.\n");
   fprintf(stderr, "         -t:  Write a training file (if none exists); ");
