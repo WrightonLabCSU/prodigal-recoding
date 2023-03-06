@@ -8,9 +8,10 @@ prodigal -i my.metagenome.fna -o my.genes -a my.proteins.faa -p meta
 prodigal -h
 ```
 
-### New in 2.6.7 (February 2023)
+### New in 2.6.4 (February 2023)
   * Allow specification of amber, ochre, and/or opal read-through modes for
-standard bacterial/archaeal genetic code (translation table 11)
+standard bacterial/archaeal genetic code (translation table 11) and either
+normal or training mode (NOT anonymous/metagenomic).
 
 ### Getting Started
 
