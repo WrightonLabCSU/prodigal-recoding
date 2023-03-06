@@ -303,9 +303,11 @@ int main(int argc, char *argv[]) {
     }
   }
   if(input_ptr == NULL) {
+    /* At this point, no input file was specified, so we must read from
+    standard input instead. */
     input_ptr = INPUT_OPEN("/dev/stdin", "r");
     if(input_ptr == NULL) {
-      fprintf(stderr, "\nError: can't open input file %s.\n\n", input_file);
+      fprintf(stderr, "\nError: can't read from standard input.\n\n");
       exit(5);
     }
   }
