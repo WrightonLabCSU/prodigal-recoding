@@ -59,7 +59,8 @@ int main(int argc, char *argv[]) {
   struct _training tinf;
   struct _metagenomic_bin meta[NUM_META];
   mask mlist[MAX_MASKS];
-  int user_readthrough_mode_specified;    
+  int user_readthrough_mode_specified;
+  int arguments_to_skip;    
 
   /* Allocate memory and initialize variables */
   seq = (unsigned char *)malloc(MAX_SEQ/4*sizeof(unsigned char));
@@ -97,6 +98,7 @@ int main(int argc, char *argv[]) {
   output_ptr = stdout; max_slen = 0;
   output = 0; closed = 0; do_mask = 0; force_nonsd = 0;
   user_readthrough_mode_specified = 0;
+  arguments_to_skip = 0;
 
   /* Filename for input copy if needed */
   pid = getpid();
@@ -115,6 +117,10 @@ int main(int argc, char *argv[]) {
 
   /* Parse the command line arguments */
   for(i = 1; i < argc; i++) {
+    if(arguments_to_skip > 0) {
+      arguments_to_skip--;
+      continue; // Proceed to the next iteration
+    }
     if(i == argc-1 && (
        strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "-T") == 0 ||
        strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-A") == 0 ||
@@ -173,28 +179,28 @@ int main(int argc, char *argv[]) {
       /* Start parsing the subsequent arguments to determine which read-through
       mode(s) is/are specified. Stop when we have run out of arguments or found
       one that can't be interpreted as a read-through mode. Whenever we find a
-      read-through mode, we know that we will need to resume the wider search
-      for arguments after it. */
+      read-through mode, we know that we will need to skip that argument in the
+      main parsing loop. */
       for(j = i + 1; j < argc; j++) {
         if(strcmp(argv[j], "amber") == 0 || strcmp(argv[j], "AMBER") == 0) {
           tinf.amber_readthrough = 1;
           user_readthrough_mode_specified = 1;
-          i = j + 1;
+          arguments_to_skip++;
         }
         else if (strcmp(argv[j], "opal") == 0 || strcmp(argv[j], "OPAL") == 0) {
           tinf.opal_readthrough = 1;
           user_readthrough_mode_specified = 1;            
-          i = j + 1;
+          arguments_to_skip++;
         }
         else if (strcmp(argv[j], "ochre") == 0 || strcmp(argv[j], "OCHRE") == 0) {
           tinf.ochre_readthrough = 1;
           user_readthrough_mode_specified = 1;            
-          i = j + 1;
+          arguments_to_skip++;
         }
         else {
-          /* Since this is NOT a read-through mode, we will resume the wider
-          search at this position. */
-          i = j; 
+          /* Since this is NOT a read-through mode, we will not skip it when
+          we resume the main parsing loop. However, we know that we can stop
+          looking for read-through modes. */
           break;
         }
       }
