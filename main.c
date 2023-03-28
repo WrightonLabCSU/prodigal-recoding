@@ -28,8 +28,8 @@
 #include "fptr.h"
 
 
-#define VERSION "2.6.4"
-#define DATE "February, 2023"
+#define VERSION "2.6.4-recoding"
+#define DATE "March, 2023"
 
 #define MIN_SINGLE_GENOME 20000
 #define IDEAL_SINGLE_GENOME 100000
@@ -234,8 +234,9 @@ int main(int argc, char *argv[]) {
     else usage("Unknown option.");
   }
 
-  /* Because the anonymous mode doesn't contain any information regarding
-  color codons, it is incompatible with any read-through mode(s). */
+  /* Because the metagenomic training data don't contain any information
+  regarding color codons, the metagenome mode is incompatible with any
+  read-through mode(s). */
   if (is_meta == 1 && user_readthrough_mode_specified == 1)
   {
     usage("Anonymous mode is incompatible with read-through modes.");
@@ -248,6 +249,10 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Univ of Tenn / Oak Ridge National Lab\n");
     fprintf(stderr, "Doug Hyatt, Loren Hauser, et al.     \n");
     fprintf(stderr, "-------------------------------------\n");
+    fprintf(stderr, "Read-through functionality by        \n");    
+    fprintf(stderr, "mSys Lab at Colorado State University\n");
+    fprintf(stderr, "Dmitri Svetlov                       \n");
+    fprintf(stderr, "-------------------------------------\n");    
   }
 
   /* Read in the training file (if specified) */
@@ -691,20 +696,20 @@ void version() {
 
 void usage(char *msg) {
   fprintf(stderr, "\n%s\n", msg);
-  fprintf(stderr, "\nUsage:  prodigal [-a trans_file] [-c] [-d nuc_file]");
-  fprintf(stderr, " [-f output_type]\n");
+  fprintf(stderr, "\nUsage:  prodigal-recoding [-a trans_file] [-c]");
+  fprintf(stderr, " [-d nuc_file] [-f output_type]\n");
   fprintf(stderr, "                 [-g tr_table] [-h] [-i input_file] [-m]");
   fprintf(stderr, " [-n] [-o output_file]\n");
   fprintf(stderr, "                 [-p mode] [-r read-through_mode(s)]\n");
   fprintf(stderr, "                 [-q] [-s start_file]");  
   fprintf(stderr, " [-t training_file] [-v]\n");
-  fprintf(stderr, "\nDo 'prodigal -h' for more information.\n\n");
+  fprintf(stderr, "\nDo 'prodigal-recoding -h' for more information.\n\n");
   exit(15);
 }
 
 void help() {
-  fprintf(stderr, "\nUsage:  prodigal [-a trans_file] [-c] [-d nuc_file]");
-  fprintf(stderr, " [-f output_type]\n");
+  fprintf(stderr, "\nUsage:  prodigal-recoding [-a trans_file] [-c]");
+  fprintf(stderr, " [-d nuc_file] [-f output_type]\n");
   fprintf(stderr, "                 [-g tr_table] [-h] [-i input_file] [-m]");
   fprintf(stderr, " [-n] [-o output_file]\n");
   fprintf(stderr, "                 [-p mode] [-r read-through_modes]\n");
@@ -733,8 +738,8 @@ void help() {
   fprintf(stderr, " is single.\n");
   fprintf(stderr, "         -q:  Run quietly (suppress normal stderr output).\n");
   fprintf(stderr, "         -r:  Allow read-through of the subsequent list of codons");
-  fprintf(stderr, " (amber, opal, ochre) Only applied to translation table 11 ");
-  fprintf(stderr, " and only valid for anonymous/metagenomic mode.\n");  
+  fprintf(stderr, " (amber, opal, ochre) Only applied to translation table 11");
+  fprintf(stderr, " and only valid for single-genome mode.\n");  
   fprintf(stderr, "         -s:  Write all potential genes (with scores) to");
   fprintf(stderr, " the selected file.\n");
   fprintf(stderr, "         -t:  Write a training file (if none exists); ");

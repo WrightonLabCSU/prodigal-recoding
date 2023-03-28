@@ -1,3 +1,9 @@
+VERSION 2.6.4-recoding
+
+*  Allow specification of amber, ochre, and/or opal read-through modes for 
+standard bacterial/archaeal genetic code (translation table 11) and 
+single-genome mode (NOT metagenome).
+
 VERSION 2.6.3
 
 * Fixed a bug in protein translation output of partial genes where TTG/GTG
