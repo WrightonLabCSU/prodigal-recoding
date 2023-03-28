@@ -19,8 +19,6 @@ normal or training mode (NOT anonymous/metagenomic).
 
 ### Getting Started
 
-Prodigal consists of a single binary, which is provided for Linux, Mac OS X, and Windows with each official release.  You can also install from source (you will need Cygwin or MinGW on Windows) as follows:
-
 Depending on future development, pre-built binaries may be provided as part of official 
 releases. However, Prodigal can always be built from source (note that on Windows, Cygwin 
 or MinGW will be required):
