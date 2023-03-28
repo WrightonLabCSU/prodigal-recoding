@@ -26,7 +26,7 @@ releases. However, Prodigal can always be built from source (note that on Window
 or MinGW will be required):
 
 ```bash
-$ git clone https://github.com/dmitrisvetlov/prodigal-recoding
+$ git clone https://github.com/dmitrisvetlov/prodigal-recoding.git
 $ cd prodigal-recoding
 $ make install
 ```
@@ -59,4 +59,3 @@ The modifications made in `prodigal-recoding` were made by [Dmitri Svetlov](http
 #### License
 
   [GPL](LICENSE)
-  
