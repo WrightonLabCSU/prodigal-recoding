@@ -291,6 +291,7 @@ int is_stop(unsigned char *seq, int n, struct _training *tinf) {
   if(is_t(seq, n) == 1 && is_a(seq, n+1) == 1 && is_g(seq, n+2) == 1) {
     if(tinf->trans_table == 6 || tinf->trans_table == 15 ||
        tinf->trans_table == 16 || tinf->trans_table == 22) return 0;
+    if(tinf->trans_table == 11) return !(tinf->amber_readthrough);       
     return 1;
   }
 
@@ -300,12 +301,14 @@ int is_stop(unsigned char *seq, int n, struct _training *tinf) {
        tinf->trans_table == 9 || tinf->trans_table == 10 ||
        tinf->trans_table == 13 || tinf->trans_table == 14 ||
        tinf->trans_table == 21 || tinf->trans_table == 25) return 0;
+    if(tinf->trans_table == 11) return !(tinf->opal_readthrough);              
     return 1;
   }
 
   /* TAA */
   if(is_t(seq, n) == 1 && is_a(seq, n+1) == 1 && is_a(seq, n+2) == 1) {
     if(tinf->trans_table == 6 || tinf->trans_table == 14) return 0;
+    if(tinf->trans_table == 11) return !(tinf->ochre_readthrough);           
     return 1;
   }
 
@@ -493,6 +496,17 @@ char amino(unsigned char *seq, int n, struct _training *tinf, int is_init) {
   if(is_g(seq, n) == 1 && is_a(seq, n+1) == 1 && is_g(seq, n+2) == 1)
     return 'E';
   if(is_g(seq, n) == 1 && is_g(seq, n+1) == 1) return 'G';
+
+  /* Handle Pyl (pyrrolysine) */
+  if(is_t(seq, n) == 1 && is_a(seq, n+1) == 1 && is_g(seq, n+2) == 1) {
+    if(tinf->trans_table == 11 && tinf->amber_readthrough) return 'O';
+  }
+
+  /* Handle Sec (selenocysteine) */
+  if(is_t(seq, n) == 1 && is_g(seq, n+1) == 1 && is_a(seq, n+2) == 1) {
+    if(tinf->trans_table == 11 && tinf->opal_readthrough) return 'U';
+  }
+
   return 'X';
 }
 
@@ -518,6 +532,8 @@ int amino_num(char aa) {
   if(aa == 'v' || aa == 'V') return 17;
   if(aa == 'w' || aa == 'W') return 18;
   if(aa == 'y' || aa == 'Y') return 19;
+  if(aa == 'o' || aa == 'O') return 20;
+  if(aa == 'u' || aa == 'U') return 21;    
   return -1;
 }
 
@@ -543,6 +559,8 @@ char amino_letter(int num) {
   if(num == 17) return 'V';
   if(num == 18) return 'W';
   if(num == 19) return 'Y';
+  if(num == 20) return 'O';  
+  if(num == 21) return 'U';  
   return 'X';
 }
 

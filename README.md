@@ -1,22 +1,31 @@
-# Prodigal
+# Prodigal-recoding
 
-  Fast, reliable protein-coding gene prediction for prokaryotic genomes.
+A fork of [Prodigal](https://www.github.com/hyattpd/Prodigal/) that allows
+read-through and translation of amber, ochre, and/or opal codons for single
+genomes using the standard bacterial/archaeal genetic code
+(translation table 11).
 
 ```bash
-prodigal -i my.genome.fna -o my.genes -a my.proteins.faa
-prodigal -i my.metagenome.fna -o my.genes -a my.proteins.faa -p meta
-prodigal -h
+prodigal-recoding -i my.genome.fna -o my.genes -a my.proteins.faa
+prodigal-recoding -i my.genome.fna -o my.genes -a my.proteins.faa -r amber
+prodigal-recoding -i my.metagenome.fna -o my.genes -a my.proteins.faa -p meta
+prodigal-recoding -h
 ```
 
-### New in 2.6.3 (February 2016)
-  * Fixed a bug in protein translation output of partial genes where TTG/GTG
-codons were being incorrectly translated to methionine.
+### New in 2.6.4-recoding (March 2023)
+  * Allow specification of amber, ochre, and/or opal read-through modes for
+standard bacterial/archaeal genetic code (translation table 11) and either
+normal or training mode (NOT anonymous/metagenomic).
 
 ### Getting Started
 
-Prodigal consists of a single binary, which is provided for Linux, Mac OS X, and Windows with each official release.  You can also install from source (you will need Cygwin or MinGW on Windows) as follows:
+Depending on future development, pre-built binaries may be provided as part of official 
+releases. However, Prodigal can always be built from source (note that on Windows, Cygwin 
+or MinGW will be required):
 
 ```bash
+$ git clone https://github.com/dmitrisvetlov/prodigal-recoding.git
+$ cd prodigal-recoding
 $ make install
 ```
 
@@ -25,7 +34,7 @@ $ make install
   To see a complete list of options:
 
 ```bash
-$ prodigal -h
+$ prodigal-recoding -h
 ```
 
 ### Features
@@ -37,16 +46,13 @@ $ prodigal -h
   * **Handles gaps and partial genes**: The user can specify if Prodigal should build genes across runs of N's as well as how to handle genes at the edges of contigs.
   * **Identifies translation initiation sites**: Prodigal predicts the correct translation initiation site for most genes, and can output information about every potential start site in the genome, including confidence score, RBS motif, and much more.
 
-### More Information
-
-  * [Website](http://prodigal.ornl.gov/)
-  * [Wiki Documentation](https://github.com/hyattpd/prodigal/wiki)
-  * [Options Cheat Sheet](https://github.com/hyattpd/prodigal/wiki#cheat-sheet)
-  * [Google Discussion Group](https://groups.google.com/group/prodigal-discuss)
-
 #### Contributors
 
- * Author: [Doug Hyatt](https://github.com/hyattpd/)
+Prodigal was written by [Doug Hyatt](https://github.com/hyattpd/) and its usage should be acknowledged.
+
+> Hyatt, D., Chen, G.-L., LoCascio, P.F., Land, M.L., Larimer, F.W., and Hauser, L.J. (2010). [Prodigal: prokaryotic gene recognition and translation initiation site identification](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-119). BMC Bioinformatics *11*, 119.
+
+The modifications made in `prodigal-recoding` were made by [Dmitri Svetlov](https://github.com/dmitrisvetlov/).
 
 #### License
 
